@@ -1,9 +1,8 @@
 # fa21python2_adam
 
-## Lorem Ipsum etc. etc.
-# Piggly-wiggly.
+## Herbsttag
 
-Herbsttag
+A poem by Rainer Maria Rilke
 
     Herr!  Es ist Zeit.
     Der Sommer war sehr gross.
