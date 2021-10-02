@@ -10,6 +10,6 @@
     *Leg Deinen Schatten auf die Sonnenuhren,*
     *auf die Fluren lass die Winde los.*
 
-![Coding Diagram for Laurel Mountain CSV Reader](img\LaurelMountainClimateReader-Brode.jpg)
+![Coding Diagram for Laurel Mountain CSV Reader](img/LaurelMountainClimateReader-Brode.jpg)
 
 
