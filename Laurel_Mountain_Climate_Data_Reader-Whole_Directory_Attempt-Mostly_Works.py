@@ -21,9 +21,9 @@ def monthly_temp_data_reader():
                 reader = csv.reader(temp_file)
                 temp_dict = {row[0]:row[1] for row in reader}
                 del temp_dict['Date']  
-                if os.path.exists('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\temperature_data.json') is True:
+                if os.path.exists('C:\\Users\\brode\\Python\\fa21python2_adam\\temperature_data.json') is True:
     
-                    with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\temperature_data.json') as old_dict_object:
+                    with open('C:\\Users\\brode\\Python\\fa21python2_adam\\temperature_data.json') as old_dict_object:
                         old_dict = old_dict_object.read()
                         old_dict_object.close()
                         old_dict = json.loads(old_dict)
@@ -31,15 +31,15 @@ def monthly_temp_data_reader():
                         old_dict.update(temp_dict)
                         updated_dict = old_dict
             
-                if os.path.exists('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\temperature_data.json') is False:
+                if os.path.exists('C:\\Users\\brode\\Python\\fa21python2_adam\\temperature_data.json') is False:
                     updated_dict = temp_dict
                 
-                with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\temperature_data.json', 'w') as jsonfile:
+                with open('C:\\Users\\brode\\Python\\fa21python2_adam\\temperature_data.json', 'w') as jsonfile:
                         json.dump(updated_dict, jsonfile)
 
 def results_dumper():
-    if os.path.exists('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\query_results_data.json') is True:
-        with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\query_results_data.json') as old_query_object:
+    if os.path.exists('C:\\Users\\brode\\Python\\fa21python2_adam\\query_results_data.json') is True:
+        with open('C:\\Users\\brode\\Python\\fa21python2_adam\\query_results_data.json') as old_query_object:
             old_query = old_query_object.read()
             old_query_object.close()
             old_query = json.loads(old_query)
@@ -47,10 +47,10 @@ def results_dumper():
             old_query.update(temp_query)
             updated_query = old_query
             
-    if os.path.exists('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\query_resultse_data.json') is False:
+    if os.path.exists('C:\\Users\\brode\\Python\\fa21python2_adam\\query_resultse_data.json') is False:
             updated_query = temp_query
         
-    with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\query_results_data.json', 'w') as jsonfile:
+    with open('C:\\Users\\brode\\Python\\fa21python2_adam\\query_results_data.json', 'w') as jsonfile:
                 json.dump(updated_query, jsonfile)
     
 
@@ -59,7 +59,7 @@ def search_function(query_results):
 
     new_query_results = {}
 
-    with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\temperature_data.json') as finished_dict_object:
+    with open('C:\\Users\\brode\\Python\\fa21python2_adam\\temperature_data.json') as finished_dict_object:
         finished_dict = finished_dict_object.read()
         finished_dict_object.close()
         finished_dict = json.loads(finished_dict)
@@ -95,7 +95,7 @@ def search_function(query_results):
         print('\n')
         print('Thank you for using the Laurel Mountain Daily Temperature Database')                
 
-    with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\query_results_data.json', 'w') as jsonfile:
+    with open('C:\\Users\\brode\\Python\\fa21python2_adam\\query_results_data.json', 'w') as jsonfile:
                 json.dump(query_results, jsonfile)
     
     return query_results
