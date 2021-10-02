@@ -10,7 +10,7 @@ import os.path
 
 def monthly_temp_data_reader():
     
-    with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\LaurelMountainTempsDecember1972.csv', mode='r')\
+    with open('C:\\Users\\brode\\Python\\Laurel Mountain Historical Climate Data\\CSV Versions\\LaurelMountainTempsFebruary1972.csv', mode='r')\
         as temp_file:
         reader = csv.reader(temp_file)
         temp_dict = {row[0]:row[1] for row in reader}
@@ -31,6 +31,7 @@ def json_dumper():
 
             old_dict.update(temp_dict)
             updated_dict = old_dict
+            print(updated_dict)
     
     if os.path.exists('C:\\Users\\brode\\Python\\temp_data.json') is False:
         updated_dict = temp_dict

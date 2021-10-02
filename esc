@@ -1,0 +1,46 @@
+[33mcommit 2cd48dfeadf2bd88b14e29ff930d9c0c67e5db75[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: Adam Brode <brodeam@gmail.com>
+Date:   Sat Sep 25 12:54:45 2021 -0400
+
+    Updated Reader - now works with JSON importation
+
+[33mcommit f7724b2345530db3b9a60912b8a52958e0fd657c[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Adam Brode <brodeam@gmail.com>
+Date:   Fri Sep 24 17:47:01 2021 -0400
+
+    Adding Laurel Mountain Project File to directory
+
+[33mcommit 5ed9a4f51d72626c8ff58b8f2542d6839c446814[m
+Merge: ac79d5e c071cea
+Author: Adam Brode <brodeam@Adams-MBP.fios-router.home>
+Date:   Sat Sep 18 15:08:19 2021 -0400
+
+    Testing merge
+
+[33mcommit c071cea84939ef0d6cba5d87e5a64de2f911cf8c[m
+Author: Adam Brode <89703008+silfeid@users.noreply.github.com>
+Date:   Sat Sep 18 15:02:35 2021 -0400
+
+    Update README.md
+    
+    Southern Grocery Store, possibly defunct.
+
+[33mcommit ac79d5e03a761dd3cc2bf1aecca812ea6cab1190[m
+Author: Adam Brode <brodeam@Adams-MBP.fios-router.home>
+Date:   Sat Sep 18 15:00:14 2021 -0400
+
+    Added json
+
+[33mcommit 0a31b07067065afbb46853c287e72159e323fe30[m
+Author: Adam Brode <89703008+silfeid@users.noreply.github.com>
+Date:   Sat Sep 18 14:30:10 2021 -0400
+
+    Lorem Ipsum
+    
+    Not needed.
+
+[33mcommit 5917f6855e2f107c681780c2317a4eb1bdcbe9e1[m
+Author: Adam Brode <89703008+silfeid@users.noreply.github.com>
+Date:   Sat Sep 18 14:11:53 2021 -0400
+
+    Initial commit
