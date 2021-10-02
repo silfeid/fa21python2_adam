@@ -12,6 +12,6 @@
 
 ## Coding Diagram for Laurel Mountain CSV Reader
 
-![Coding Diagram for Laurel Mountain CSV Reader](LaurelMountainClimateReader-Brode.jpg)
+![Coding Diagram for Laurel Mountain CSV Reader](LaurelMountainClimateReader-Brode.jpg "Diagram")
 
 
