@@ -1,0 +1,8 @@
+The average daily high during ski season for the 2000s was 41 degrees Fahrenheit.
+Data was missing for 201 out of 1089 days.
+The average daily low during ski season for the 2000s was 24 degrees Fahrenheit.
+Data was missing for 132 out of 1089 days.
+The average daily temperature spread was 17 degrees Fahrenheit.
+The average daily snowdepth was 3 inches.
+Data was missing for 185 out of 1089 days.
+
