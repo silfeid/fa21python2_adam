@@ -33,9 +33,9 @@ def print_icon():
         
         print_string = ''.join(print_line)
         
-        corr_print_string = print_string.replace('0', ' ')
+        corr_print_string = print_string.replace('0', '  ')
         
-        corr_print_string = corr_print_string.replace('1', '*')  
+        corr_print_string = corr_print_string.replace('1', '**')  
         
         print(corr_print_string)
 
