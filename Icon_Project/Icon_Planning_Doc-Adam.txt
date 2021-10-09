@@ -1,0 +1,29 @@
+﻿ICON PROJECT
+Coding Plan
+
+
+Notes:  icon exists as .csv file of 0’s, 1’s; is primitive key logo; 10x10, not perfectly centered or symmetrical.  
+  
+
+FUNCTIONS
+
+
+read_in_icon()
+        Opens csv
+        Creates dict from csv rows
+                Keys are 1-10
+                Values are lists of 0’s, 1’s
+
+
+print_icon()
+        Read key/values pairs
+        Print lists (values) as graphic/icon
+        Transform 0’s to spaces, 1’s to symbol (@, #, etc.)
+        New line after each row
+
+
+transform_icon()
+        Scaling is probably easiest - double each 0, 1, in each row and then duplicate the   doubled rows.
+        Rotate 90/180 seems a lot harder
+        Invert Colors seems pretty easy
+        Mirroring is probably doable
