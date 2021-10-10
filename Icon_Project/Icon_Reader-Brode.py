@@ -6,6 +6,7 @@ Created on Fri Oct  8 20:25:50 2021
 """
 import csv
 #GOTTA ADD CODING COMMNTARY - DOCSTRINGS!!!
+#TO FINISH:  make it so that each transformation can be applied at any stage; user picks, it shows, user is taken back to menu, can pick again, revert to original, or quit.  Streamline code - don't need all these separate functions, print for example - should be one function.  Add commentary throughout and you're done, son!  Don't forget to push everything to Git.
 
 def read_in_icon():
     
