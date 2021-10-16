@@ -54,9 +54,10 @@ def write_csv(icon_list):
     with open('fa21python2_adam\\Icon_Project\\Icon_Files\\filepath.txt', 'w') as filepath_object:
         filepath_object.write(filepath_text)
         filepath_object.close()
+        #Updates the name written in the filepath document to whatever it was changed to here; either from its original name to tempfile, or from tempfile to tempfile (no change)
 
 def save_icon():
-    
+    #The function to (permanently) save the icon under a name of the user's choice in the Icon_Files folder.
     filepath_text = grab_filepath()
     icon_dict = {}
     icon_dict_key = 0
@@ -67,20 +68,24 @@ def save_icon():
         for line in reader:
             icon_dict_key += 1
             icon_dict[icon_dict_key] = line
+     #Read the icon in        
             
     for value in icon_dict.values():
         default_string = default_string+''
         for item in value:
             default_string = default_string+item
+    
 
         default_string = default_string+','
 
     default_string = default_string.rstrip(',')
     value_list = default_string.split(',')
+    #Convert the icon_dict to a list of strings (0's and 1's) that can easily be written to csv
 
     save_over_yes = ['Y', 'y']
     save_name = input('Enter the name for the icon file to be saved (.csv) - file extension not required.  File will be saved at fa21python2_adam\\Icon_Project\\Icon_Files\...')
     save_name = 'fa21python2_adam\\Icon_Project\\Icon_Files\\' + save_name + '.csv'
+    #Variables need for user to enter their own file name; if they want to overwrite an existing file, what they want the new name to be, and then the filepath with directories and the file extension to format the filepath properly.  Should add input validation for disallowed characters...
     
     if os.path.exists(save_name) is True:
         save_over = input('That filepath already exists.  Are you sure you want to overwrite the existing file? Y/N: ')
@@ -91,6 +96,7 @@ def save_icon():
             print('\nFile saved successfully!')
         else:
             save_icon()
+    #Script for overwrite, using the exists function imported from os.path (pretty handy) to check if the file already exists or not and prompt the user accordingly (below also).
 
     if os.path.exists(save_name) is False:
 
@@ -102,15 +108,18 @@ def save_icon():
     
         print('\nFile saved successfully!')
     menu_select()
-
+    #Return the user to the main menu once the file saving is completed.
 
 def init_read_in():
+    #It's a bit clunky that there are two read_in functions, but since the user isn't supposed to be able to reduce the icon to a size smaller than its original one (I can't control distortions or the cutting-off of parts of the image if they do), I need to use this function to track its original size in order to inhibit the scale_down_icon() function from shrinking the icon below its original size.
     
     icon_dict = read_in_icon()
+    #So we just use the normal read_in_icon() function to get the design, making sure that we run the init_read_in() function before running any transformations.
     default_string = ''
     valid_chars = ['0', '1']
     invalid_count = 0
     item_count = 0
+    #These variables will be used below to check the csv file for correct formatting
 
     for value in icon_dict.values():
         default_string = default_string+''
@@ -121,6 +130,8 @@ def init_read_in():
 
     default_string = default_string.rstrip(',')
     value_list = default_string.split(',')
+    
+    #Converting the design to the list format (strings of 0's and 1's) that is equivalent to the csv file;
     
     for item in value_list:
         for char in item:
@@ -171,7 +182,7 @@ def solicit_filepath():
 
     if filepath_text == '':
         filepath_text = 'fa21python2_adam\\Icon_Project\\Icon_Files\\Icon_Design.csv'
-        print('Default icon loaded.')
+        print('\nDefault icon loaded.')
 
     else:
         filepath_text = 'fa21python2_adam\\Icon_Project\\Icon_Files\\'+filepath_text+'.csv'
