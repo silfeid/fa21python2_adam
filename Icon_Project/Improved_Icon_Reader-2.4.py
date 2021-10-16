@@ -12,38 +12,45 @@ import os.path
 
 def func_quit():
     sys.exit()
+#Grabbed how to do this from the internet - run this function when user input equals 'Q' or 'q' at certain points.  Seems pretty handy.
 
 def choose_char():
-    valid_char_choices = ['*', '#', '@', '$']
-
-    char_choice = input('Choose from *, #, @, or $ as the fill-unit with which to draw your icon by typing the character of your choice: ')
-    if char_choice in valid_char_choices:
+    #This function allows the user to select which character they wish to use to draw their icon.  The symbol set is needed since these aren't covered by the built-in isalnum() function.  If the user picks a sumbol that isn't listed here and isn't a number or letter, the function rejects the input and runs afresh.  If a valid choice is made, the character is written to a text file, to be retrieved by the grab_char() function and then used in the print_icon() function.
+    symbol_set = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']', '{', '}', '-', '_', '=', '+']
+    char_choice = input('Type the character (symbol or alphanumeric) of your choice with which to draw your icon: ')
+    if char_choice.isalnum() is True:
+        with open('fa21python2_adam\\Icon_Project\\Icon_Files\\charchoice.txt', 'w') as char_doc:
+            char_doc.write(char_choice)
+    elif char_choice in symbol_set:
         with open('fa21python2_adam\\Icon_Project\\Icon_Files\\charchoice.txt', 'w') as char_doc:
             char_doc.write(char_choice)
     else:
+        print('\nInvalid character, pick another.')
         choose_char()
         
 def grab_char():
-    
+    #Opens the txt file from choose_char and retrieves the specific character/numeral/symbol chosen by the user.  Returns their choice (read from file) as variable 'char'.
     with open('fa21python2_adam\\Icon_Project\\Icon_Files\\charchoice.txt', 'r') as char_doc:
         char = char_doc.read()
     return char
 
 def write_csv(icon_list):
+    #A pretty important function for this program.  Whatever transformations to the icon the user undertakes are saved as a csv file in the same format of 0's and 1's in which it was initially read in, though it can be (much) larger than the original file in terms of numbers of rows and columns.
 
     filepath_text = grab_filepath()
-    
+    #Retrieves the filepath for this particular icon (cf. def grab_filepath() for more info).
     if 'tempfile' in filepath_text:
         filepath_text = filepath_text
-    else:
+        #While it's being transformed, the icon design is saved as tempfile.csv; users have the option to save it permanently under a name of their choice(cf. def save_icon() for more info).  If this is the second or later transformation, the icon design will already be saved as tempfile, so the name doesn't need to be changed - it already is tempfile.
         filepath_text = 'fa21python2_adam\\Icon_Project\\Icon_Files\\tempfile.csv'
+        #If this is the first transformation to the icon, it needs to be saved as tempfile.csv for the first time - executed here.
 
     with open(filepath_text, 'w', newline='') as icon_list_object:
         icon_list_file = csv.writer(icon_list_object)
         icon_list_file.writerows(icon_list)
+        icon_list_object.close()
+        #Create a new .csv file and write the icon_list (a list of the rows of the design) to a csv file.
 
-    icon_list_object.close()
-    
     with open('fa21python2_adam\\Icon_Project\\Icon_Files\\filepath.txt', 'w') as filepath_object:
         filepath_object.write(filepath_text)
         filepath_object.close()
@@ -129,10 +136,11 @@ def init_read_in():
             invalid_count += 1
         
     if invalid_count > 0:
-        print('\n********Icon format is invalid - only 0\'s and 1\'s accepted.  Please revise or try another design.********')
+        print('\nIcon format is invalid!\nOnly 0\'s and 1\'s accepted!\nMaximum row/column size of 40!\nPlease revise this design or try another.')
         solicit_filepath()
     else:
-
+        print('\nOptional icon design loaded successfully.')
+        
         row_count = len(value_list[0])
     
         with open('fa21python2_adam\\Icon_Project\\Icon_Files\\rowlength.txt', 'w') as rowlength:
@@ -151,10 +159,7 @@ def intro():
 
     print('Welcome to the icon project.  I can read in a csv file of 0s and 1s comprised of up to approximately 40 rows/columns and print the design thus represented as an icon. I can also scale the icon up in size at intervals of 2x and back down (though no smaller than its original size), rotate it to the left or right, mirror it, and invert it.')
 
-    user_command = input('Press any key to proceed, or type Q or q to quit: ')
-
-    if user_command not in quit_commands:
-        print('\nHere we go!')
+    user_command = input('Hit Enter to proceed, or type Q/q to quit: ')
 
     if user_command in quit_commands:
         func_quit()
@@ -166,9 +171,11 @@ def solicit_filepath():
 
     if filepath_text == '':
         filepath_text = 'fa21python2_adam\\Icon_Project\\Icon_Files\\Icon_Design.csv'
+        print('Default icon loaded.')
 
     else:
         filepath_text = 'fa21python2_adam\\Icon_Project\\Icon_Files\\'+filepath_text+'.csv'
+        
 
     with open('fa21python2_adam\\Icon_Project\\Icon_Files\\filepath.txt', 'w') as filepath_object:
         filepath_object.write(filepath_text)
@@ -180,7 +187,7 @@ def menu_select():
 
     valid_user_choices = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Q', 'q']
 
-    user_choice = input('Type the number corresponding to the option you would like to pursue, or Q/q to quit.\n\n1.Print the icon.\n2.Scale the icon up.\n3.Scale the icon down.\n4.Mirror the icon.\n5.Invert the Icon.\n6.Rotate the icon 90 degrees left or right.\n7.Change the print character.\n8.Change the icon.\n9.Save the icon.\n\nInput: ')
+    user_choice = input('Type the number corresponding to the option you would like to pursue, or Q/q to quit.\n\n1.Print the icon\n2.Scale the icon up\n3.Scale the icon down\n4.Mirror the icon\n5.Invert the Icon\n6.Rotate the icon 90 degrees left or right\n7.Change the print character\n8.Change the icon\n9.Save the icon\n\nInput: ')
 
     if user_choice in valid_user_choices:
 
@@ -214,7 +221,6 @@ def menu_select():
 
         if user_choice == '8':
             solicit_filepath()
-            init_read_in()
             menu_select()
             
         if user_choice == '9':
@@ -247,7 +253,6 @@ def read_in_icon():
             for line in reader:
                 icon_dict_key += 1
                 icon_dict[icon_dict_key] = line
-        print('\nGreat! That worked.  Let\'s proceed.')
     
     if os.path.exists(filepath_text) is False:
         print('\nThat filepath does not exist.  Try another.')
@@ -320,7 +325,7 @@ def scale_down_icon():
     value_list = default_string.split(',')
 
     if len(value_list[0]) <= row_count:
-        print('\nItem too small to be scaled down further.')
+        print('\nItem too small to be scaled down any further (original size reached).')
         for item in value_list:
             scaled_list.append(item)
 
@@ -387,7 +392,7 @@ def rotate_icon():
     R_commands = ['R', 'r']
     Q_commands = ['Q', 'q']
     
-    rotation_dir = input('Type L/l to rotate the icon 90 degrees to the left (counter-clockwise) or R/r to rotate the icon 90 degrees to the right (clockwise), or type Q/q to return to the main menu: ')
+    rotation_dir = input('Type L/l to rotate the icon 90 degrees to the left (counter-clockwise), R/r to rotate the icon 90 degrees to the right (clockwise), or type Q/q to return to the main menu: ')
     
     if rotation_dir in L_commands:
         
