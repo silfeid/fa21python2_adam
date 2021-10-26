@@ -7,6 +7,8 @@ Created on Fri Sep 24 18:57:50 2021
 import csv
 import json
 import os.path
+import pandas
+import matplotlib.pylab as plt
 
 directory_A = r'C:\Users\brode\Python\Laurel Mountain Historical Climate Data\CSV Versions\1970s'
 directory_B = r'C:\Users\brode\Python\Laurel Mountain Historical Climate Data\CSV Versions\2000s'
@@ -163,6 +165,22 @@ def monthly_snowdepth_reader_1970s():
                 with open('C:\\Users\\brode\\Python\\fa21python2_adam\\1970s\\snowdepth_data.json', 'w') as jsonfile:
                         json.dump(updated_dict, jsonfile)
 
+def snowdepth_plotter_1970s():
+    with open('fa21python2_adam\\1970s\\1970s_data.csv', mode='r') as temp_file:
+                reader = csv.reader(temp_file)
+                temp_dict = {row[0]:row[-1] for row in reader}
+                    
+    
+    myList = temp_dict.items()
+    myList = sorted(myList) 
+    x, y = zip(*myList) 
+    
+    plt.plot(x, y)
+    plt.show()
+    
+    
+    
+    
 def search_function_2000s(query_results):
 
     quit_commands = ['Q', 'q']
@@ -392,6 +410,7 @@ def main():
     monthly_temp_min_reader_2000s()
     monthly_snowdepth_reader_2000s()
     search_function_2000s(query_results)
+    snowdepth_plotter_1970s()
 
 if __name__ == "__main__":
     main()
