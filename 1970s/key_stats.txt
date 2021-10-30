@@ -1,8 +1,0 @@
-The average daily high during ski season for the 1970s was 35 degrees Fahrenheit.
-Data was missing for 77 out of 1093 days.
-The average daily low during ski season for the 1970s was 20 degrees Fahrenheit.
-Data was missing for 157 out of 1093 days.
-The average daily temperature spread was 15 degrees Fahrenheit.
-The average daily snowdepth was 9 inches.
-Data was missing for 205 out of 1093 days.
-
