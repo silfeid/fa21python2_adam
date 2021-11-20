@@ -57,6 +57,23 @@ def get_country_code():
     
     return country_code
 
+def get_past_year_data():
+    #A little function to grab the historical climate data for a given country; there's only one scenario (past is solitary, future myriad) and only one range of dates 1901-2009, so all we need is the country code and we can assemble the DataFrame we'll need, which is what this function returns.  For more information on that, cf. the top of main().
+    
+    country_code = get_country_code()
+
+    past_request = 'http://climatedataapi.worldbank.org/climateweb/rest/v1/country/cru/tas/month/'+country_code+'.json'
+        
+    past_data_API = requests.get(past_request)
+
+    past_data = past_data_API.text
+    
+    parsable_past_data = json.loads(past_data)
+    
+    parsable_past_data = pd.DataFrame(parsable_past_data)
+    
+    return parsable_past_data
+
 def main():
     
     pick_country()
@@ -291,23 +308,7 @@ def Fahrenheit_Converter(temp):
     #Pretty self-evident
     corrected_temp = round((temp*(9/5)+32), 2)   
     return corrected_temp
- 
-def get_past_year_data():
-    #A little function to grab the historical climate data for a given country; there's only one scenario (past is solitary, future myriad) and only one range of dates 1901-2009, so all we need is the country code and we can assemble the DataFrame we'll need, which is what this function returns.  For more information on that, cf. the top of main().
-    
-    country_code = get_country_code()
 
-    past_request = 'http://climatedataapi.worldbank.org/climateweb/rest/v1/country/cru/tas/month/'+country_code+'.json'
-        
-    past_data_API = requests.get(past_request)
-
-    past_data = past_data_API.text
-    
-    parsable_past_data = json.loads(past_data)
-    
-    parsable_past_data = pd.DataFrame(parsable_past_data)
-    
-    return parsable_past_data
         
 if __name__ == "__main__":
     main()
