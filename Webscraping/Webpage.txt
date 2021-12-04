@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov 20 14:44:36 2021
+
+@author: brode
+"""
+
+<html>
+    <head>
+        <title>Snickerdoodles And You</title>
+    </head>
+    <body>
+        <h1>The origin of the Snickerdoodle &lt; Beginnings in Germany</h1>
+        <p> The Pennsylvania Dutch, stem, of course, not from the Netherlands at all, but rather from Germany, "Dutch" being derived from "Deutsch," the endonym used by speakers of Low and High German alike.</p
+        
+        <h2> Hessia and Backkuchen
+    
