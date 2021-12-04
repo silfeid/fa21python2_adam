@@ -35,7 +35,7 @@ for item in flarbin:
     if not item:
         pass
     else:
-        item = re.sub("[\[].*?[\]]", "", item)
+        item = re.sub("[\[].*[\]]", "", item)
         with open(full_filepath, 'a', encoding='utf-8') as page:
             page.write(item)
             page.write('\n')
