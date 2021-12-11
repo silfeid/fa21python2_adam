@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 import sys
 import numpy as np
 
+
+
+
 def build_snow_dfs():
     
     directory = 'fa21python2_adam/Final_Project/Climate_Data/Daily_Climate_Data/Snowdays_Only/'
@@ -45,6 +48,16 @@ def single_df_plotter():
     print('Station: '+df_name_chosen)
     print()
     print(df_choice.head())
+
+    
+    plt.plot(df_choice['Snowdepth'])
+    plt.xticks(np.arange(min(df_choice['Snowdepth']), max(df_choice['Snowdepth'])+2300, 100.0))
+    plt.xticks(rotation=90)
+    plt.xticks(fontsize = 8)
+    plt.yticks(fontsize = 8)
+    plt.xlabel('Date', fontweight='bold', color = 'black', fontsize='10')
+    plt.ylabel('Snow Depth in Inches', fontweight='bold', color = 'black', fontsize='10')
+    plt.show()
     
         
     
