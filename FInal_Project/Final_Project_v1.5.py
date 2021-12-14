@@ -61,11 +61,11 @@ def single_df_plotter():
     date_range = df_choice['ObDate'].to_list()
 
     #index = pd.date_range(start = date_range[0], end = date_range[-1], freq = "D")
-    #index = [pd.to_datetime(date, format='%Y-%m-%d').date() for date in index]
+    index = [pd.to_datetime(date, format='%m/%d/%Y').date() for date in date_range]
 
     data = df_choice[plot_variable].to_list()
 
-    df = pd.DataFrame(data=data,index=date_range, columns=[plot_variable])
+    df = pd.DataFrame(data=data,index=index, columns=[plot_variable])
     
     
     
@@ -82,7 +82,7 @@ def single_df_plotter():
     plt.title(plot_title, fontweight = 'bold', color = 'black', fontsize = '12')
     #UGH
     #plt.xticks(np.arange(min(date_range[0]), max(date_range[-1])+0, 356.0))
-    plt.xticks(rotation=90)
+    plt.xticks(rotation=70)
     plt.xticks(fontsize = 8)
     plt.yticks(fontsize = 8)
     plt.xlabel('\nDate', fontweight='bold', color = 'black', fontsize='8')
