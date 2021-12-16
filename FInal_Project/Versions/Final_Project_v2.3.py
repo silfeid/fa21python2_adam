@@ -14,6 +14,7 @@ import sys
 import numpy as np
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
+import datetime
 
 def build_dfs():
     
@@ -27,12 +28,23 @@ def build_dfs():
             filename = filename.replace('.csv', '')
             df_dict[filename] = pd.read_csv(directory+filename+'.csv')
             df_dict[filename] = df_dict[filename].set_index('ObDate')
-    
-    '''for dataframe_name in df_dict:
-        print(dataframe_name)
-        print(df_dict[dataframe_name])'''
-        
+
     return df_dict
+
+def slice_dfs():
+    
+    df_dict = build_dfs()
+    
+    start = str(input('Enter your desired start date in the format MM/DD/YYYY: '))
+    end = str(input('Enter your desired end date in the format MM/DD/YYYY: '))
+    
+    for df in df_dict.values():
+        df.index = pd.to_datetime(df.index)
+        
+    for key in df_dict.keys():
+        df_dict[key] = df_dict[key].loc[start:end]
+    
+    return df_dict, start, end
 
 def single_df_plotter():
     
@@ -218,9 +230,8 @@ def get_df_descriptions():
 def comparison_plotter():
 #plots a single variable for all stations across the whole time period; so, 8 line plots, coded
 #with different colors, on one graph...                
-    df_dict = build_dfs()
+    df_dict, start, end = slice_dfs()
     df_keys = df_dict.keys()
-    df_values = df_dict.values()
     
     var_sel = input('Select a variable: \n1. Average Daily Snowfall\n2. Average Daily Snow Depth\n3. Average Daily Minimum Temperature\n4. Average Daily Maximum Temperature\n\nChoice: ')
     
@@ -245,7 +256,6 @@ def comparison_plotter():
     for key in df_dict.keys():
         df_dict[key] = pd.Series(df_dict[key])
         
-    
     for key, value in df_dict.items():
         value = pd.Series(value)
         all_stations_df = all_stations_df.merge(value, how='outer', left_index=True, right_index=True)
@@ -256,8 +266,7 @@ def comparison_plotter():
         unit = ' (Degrees Fahrenheit)'
     else:
         unit = ' (inches)'
-                   
-#Really would be a lot better to turn this into a scatter plot...
+                  
     all_stations_df.to_csv('fa21python2_adam/Final_Project/All_Stations.csv')        
 
     all_stations_df.drop('Dubois_x', axis=1, inplace=True)
@@ -267,14 +276,18 @@ def comparison_plotter():
     all_stations_df['ObDate'] = pd.to_datetime(all_stations_df['ObDate'])
     all_stations_df = all_stations_df.set_index('ObDate')
     all_stations_df = all_stations_df.sort_index()
+    
+    start = start.replace('/', '.')
+    end = end.replace('/', '.')
 
     summary_stats = all_stations_df.describe()
     summary_stats.to_csv('fa21python2_adam/Final_Project/Summary_Stats_'+var_sel+'.csv')
-    all_stations_plot = all_stations_df.plot(title='Historical '+fixed_var_sels[var_sel], xlabel='Year', ylabel=fixed_var_sels[var_sel]+unit, style='.', ms=2, figsize = (25, 10))
+    all_stations_plot = all_stations_df.plot(title='Historical '+fixed_var_sels[var_sel], xlabel='Year', ylabel=fixed_var_sels[var_sel]+unit, style='.', ms=4, figsize = (25, 10))
     
     fig = all_stations_plot.get_figure()
-    fig.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_'+var_sel+'.png')
-    
+    fig.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_'+var_sel+'_'+start+'-'+end+'.png')
+    plt.close()
+    print('\nPlot saved in directory \'Plots/All_Stations\' with appropriate variable names.')
 
 def correlation_plotter():
 #Need to add interface so user can pick whatever two factors they wish to correlate from the finished stations_df; lists that get inserted as column selections etc.   Try to be sparing with code.    Give z-scores for elevation, latittude, average the z-scores for each station, then plot that?  Optional...
@@ -404,7 +417,9 @@ def main():
     #intro()
     #single_df_plotter()
     #get_df_descriptions()
-    #comparison_plotter()
-    correlation_plotter()
+    comparison_plotter()
+    #correlation_plotter()
+   #slice_dfs()
+
 if __name__ == "__main__":
     main()
