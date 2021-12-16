@@ -68,7 +68,6 @@ def single_df_plotter():
     at_stations = ['Laurel_Mountain']
     
     range_count = int(len(df_choice[plot_variable]))
-    print(range_count)
     
     if df_name_chosen in at_stations:
         preposition = at_tag
@@ -232,25 +231,54 @@ def comparison_plotter():
     if var_sel in var_sel_keys:
         var_sel = var_sel_choices[var_sel]
         
-    else:
-        comparison_plotter()
-        
     for key in df_keys:
         df_dict[key] = df_dict[key][var_sel]
 
     for key in df_keys:
+        df_dict[key] = pd.Series(df_dict[key], name = key)
+        
+    slice_keys = list(df_dict.keys())
+    
+    slicer = slice_keys[0]
+        
+    all_stations_df = pd.DataFrame(df_dict[slicer])
+    
+    for key in df_dict.keys():
         df_dict[key] = pd.Series(df_dict[key])
         
     
+    for key, value in df_dict.items():
+        value = pd.Series(value)
+        all_stations_df = all_stations_df.merge(value, how='outer', left_index=True, right_index=True)
+        
+    fixed_var_sels = {'Snowdepth':'Daily Snow Depth', 'Snowfall':'Daily Snowfall', 'TempMin':'Daily Minimum Temperature', 'TempMax':'Daily Maximum Temperature'}
     
-    print(df_dict['Warren'])
+    if var_sel == 'TempMin' or var_sel == 'TempMax':
+        unit = ' (Degrees Fahrenheit)'
+    else:
+        unit = ' (inches)'
+                   
+#Really would be a lot better to turn this into a scatter plot...
+        
+    all_stations_df.drop('Dubois_x', axis=1, inplace=True)
+    all_stations_df.rename(columns={'Dubois_y':'Dubois'}, inplace=True)
+        
+    all_stations_df = all_stations_df.reset_index()
+    all_stations_df['ObDate'] = pd.to_datetime(all_stations_df['ObDate'])
+    all_stations_df = all_stations_df.set_index('ObDate')
+    all_stations_df = all_stations_df.sort_index()
+
+    summary_stats = all_stations_df.describe()
+    summary_stats.to_csv('fa21python2_adam/Final_Project/Summary_Stats_'+var_sel+'.csv')
+    all_stations_df.plot(title='Historical '+fixed_var_sels[var_sel], xlabel='Year', ylabel=fixed_var_sels[var_sel]+unit, figsize = (7, 4))
+    
+    
+
+
+#Next step is to allow slicing by date to compare one era/epoch/decade with another...
 
 
 
-
-
-'''def correlation_plotter():
-#plot all station's altitude, latitude vs. temp max, temp min, snowfall, snowdepth'''
 
 def main():
 

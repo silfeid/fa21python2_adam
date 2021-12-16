@@ -232,18 +232,33 @@ def comparison_plotter():
     if var_sel in var_sel_keys:
         var_sel = var_sel_choices[var_sel]
         
-    else:
-        comparison_plotter()
-        
     for key in df_keys:
         df_dict[key] = df_dict[key][var_sel]
 
     for key in df_keys:
+        df_dict[key] = pd.Series(df_dict[key], name = key)
+        
+    slice_keys = list(df_dict.keys())
+    
+    slicer = slice_keys[0]
+        
+    all_stations_df = pd.DataFrame(df_dict[slicer])
+    
+    for key in df_dict.keys():
         df_dict[key] = pd.Series(df_dict[key])
         
     
+    for key, value in df_dict.items():
+        value = pd.Series(value)
+        all_stations_df = all_stations_df.merge(value, how='outer', left_index=True, right_index=True)
+        
+    all_stations_df.drop('Dubois_x', axis=1, inplace=True)
+    all_stations_df.rename(columns={'Dubois_y':'Dubois'}, inplace=True)
+        
+    all_stations_df.plot(kind="line", figsize=(100, 10))
     
-    print(df_dict['Warren'])
+    
+
 
 
 

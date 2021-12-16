@@ -68,7 +68,6 @@ def single_df_plotter():
     at_stations = ['Laurel_Mountain']
     
     range_count = int(len(df_choice[plot_variable]))
-    print(range_count)
     
     if df_name_chosen in at_stations:
         preposition = at_tag
@@ -100,7 +99,6 @@ def get_df_descriptions():
     
     df_dict = build_dfs()
     df_keys = df_dict.keys()
-    df_values = df_dict.values()
     
     for key in df_keys:
         df_dict[key] = df_dict[key].describe()
@@ -213,7 +211,7 @@ def get_df_descriptions():
                 plt.text(item, tempmax_values[item], tempmax_values[item], ha='center', rotation=0, verticalalignment='center_baseline')
             plt.xlabel('Station', fontweight='bold', color = 'black', fontsize='12')
             plt.ylabel('Max Temp (Fahrenheit)', fontweight='bold', color = 'black', fontsize='12')         
-            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations_Comparison/Temp_Max_All_Stations.jpg')
+            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_Means_Comparison/Temp_Max_All_Stations.jpg')
             print('Figure saved to \'Plots\' folder')
             plt.show()      
                 
@@ -232,32 +230,181 @@ def comparison_plotter():
     if var_sel in var_sel_keys:
         var_sel = var_sel_choices[var_sel]
         
-    else:
-        comparison_plotter()
-        
     for key in df_keys:
         df_dict[key] = df_dict[key][var_sel]
 
     for key in df_keys:
+        df_dict[key] = pd.Series(df_dict[key], name = key)
+        
+    slice_keys = list(df_dict.keys())
+    
+    slicer = slice_keys[0]
+        
+    all_stations_df = pd.DataFrame(df_dict[slicer])
+    
+    for key in df_dict.keys():
         df_dict[key] = pd.Series(df_dict[key])
         
     
+    for key, value in df_dict.items():
+        value = pd.Series(value)
+        all_stations_df = all_stations_df.merge(value, how='outer', left_index=True, right_index=True)
+        
+    fixed_var_sels = {'Snowdepth':'Daily Snow Depth', 'Snowfall':'Daily Snowfall', 'TempMin':'Daily Minimum Temperature', 'TempMax':'Daily Maximum Temperature'}
     
-    print(df_dict['Warren'])
+    if var_sel == 'TempMin' or var_sel == 'TempMax':
+        unit = ' (Degrees Fahrenheit)'
+    else:
+        unit = ' (inches)'
+                   
+#Really would be a lot better to turn this into a scatter plot...
+    all_stations_df.to_csv('fa21python2_adam/Final_Project/All_Stations.csv')        
+
+    all_stations_df.drop('Dubois_x', axis=1, inplace=True)
+    all_stations_df.rename(columns={'Dubois_y':'Dubois'}, inplace=True)
+        
+    all_stations_df = all_stations_df.reset_index()
+    all_stations_df['ObDate'] = pd.to_datetime(all_stations_df['ObDate'])
+    all_stations_df = all_stations_df.set_index('ObDate')
+    all_stations_df = all_stations_df.sort_index()
+
+    summary_stats = all_stations_df.describe()
+    summary_stats.to_csv('fa21python2_adam/Final_Project/Summary_Stats_'+var_sel+'.csv')
+    all_stations_plot = all_stations_df.plot(title='Historical '+fixed_var_sels[var_sel], xlabel='Year', ylabel=fixed_var_sels[var_sel]+unit, style='.', ms=2, figsize = (25, 10))
+    
+    fig = all_stations_plot.get_figure()
+    fig.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_'+var_sel+'.png')
+    
+
+def correlation_plotter():
+#Need to add interface so user can pick whatever two factors they wish to correlate from the finished stations_df; lists that get inserted as column selections etc.   Try to be sparing with code.    Give z-scores for elevation, latittude, average the z-scores for each station, then plot that?  Optional...
+    df_dict = build_dfs()
+    df_keys = df_dict.keys()
+    
+    for key in df_keys:
+        df_dict[key] = df_dict[key].describe()
+
+    for key in df_keys:
+        df_dict[key] = pd.Series(df_dict[key].loc['mean'])
+        
+    snowfall_dict = {}
+    snowdepth_dict = {}
+    tempmin_dict = {}
+    tempmax_dict = {}
+    
+    for key in df_keys:
+        snowfall_dict[key] = df_dict[key].loc['Snowfall']
+        snowdepth_dict[key] = df_dict[key].loc['Snowdepth']
+        tempmin_dict[key] = df_dict[key].loc['TempMin']      
+        tempmax_dict[key] = df_dict[key].loc['TempMax']        
+    
+    stations_df = pd.read_csv('fa21python2_adam/Final_Project/Climate_Data/Daily_Climate_Data/Stations/Stations.csv')
+    
+    snowfall_series = pd.Series(snowfall_dict)
+    snowfall_series.name = 'Snowfall'
+
+    stations_df['Snowfall'] = snowfall_dict.values()
+    stations_df['Snowdepth'] = snowdepth_dict.values()    
+    stations_df['TempMin'] = tempmin_dict.values()
+    stations_df['TempMax'] = tempmax_dict.values()    
+
+    #Getting z-scores for each station's latitude, then each sation's elevation, then averaging these to assess for the combined altitude/latitude score...I guess is useful?  This should be written as its own function for sure, though - too messy otherwise.
+    means_series = stations_df.describe().loc['mean']
+    
+    lat_mean = means_series.loc['Latitude']
+    elev_mean = means_series.loc['Elevation']
+    
+    lat_list = stations_df['Latitude'].to_list()
+    elev_list = stations_df['Elevation'].to_list()
+  
+    lat_sd = stations_df.describe().at['std', 'Latitude']
+    elev_sd = stations_df.describe().at['std', 'Elevation']
+    
+    lat_z_scores = []
+    elev_z_scores = []
+    
+    for lat in lat_list:
+        lat_z=(lat-lat_mean)/lat_sd
+        lat_z_scores.append(lat_z)
+        
+    for elev in elev_list:
+        elev_z=(elev-elev_mean)/elev_sd
+        elev_z_scores.append(elev_z)    
+    
+    combined_z_scores = [(a + b)/2 for a, b in zip(lat_z_scores, elev_z_scores)]
+        
+    stations_df['Lat/El'] = combined_z_scores
+
+    x_choices = {'1':'Latitude', '2':'Longitude', '3':'Elevation', '4':'Lat/El'}
+
+    x_choice = input('Choose a variable to plot on the x axis: \n\n1.Latitude\n2.Longitude\n3.Elevation\n4.Weighted Average for Latitude and Elevation\n\nChoice: ')
+    
+    if x_choice in x_choices.keys():
+        x_chosen = x_choices[x_choice]
+    else:
+        correlation_plotter()
+        
+    y_choices = {'1':'Snowfall', '2':'Snowdepth', '3':'TempMin', '4':'TempMax'}        
+    y_choice = input('Choose a variable to plot on the y axis: \n\n1.Snowfall\n2.Snow Depth\n3.Minimum Temperature\n4.Maximum Temperature\n\nChoice: ')
+    
+    if y_choice in y_choices.keys():
+        y_chosen = y_choices[y_choice]
+    else:
+        correlation_plotter()
+        
+    x = stations_df[x_chosen].to_list()
+    y = stations_df[y_chosen].to_list()
+    
+    names = stations_df['StationName'].to_list()
+    text = []
+    
+    if x_chosen == 'Latitude':
+        x_units = ' (°N)'
+    if x_chosen =='Longitude':
+        x_units = ' (°W)'
+    if x_chosen == 'Elevation':
+        x_units = ' (feet above sea level)'    
+    if x_chosen == 'Lat/El':
+        x_units = ''
+        x_chosen = 'Weighted Average for Latitude and Elevation'
+    
+    if y_chosen == 'Snowfall':
+        y_units = ' (inches)'
+    if y_chosen == 'Snowdepth':
+        y_units = ' (inches)'
+        y_chosen = 'Snow Depth'
+    if y_chosen == 'TempMin' or y_chosen == 'TempMax':
+        y_units = ' (degrees Fahrenheit)'
+        
+    for name in names:
+        name = name.replace('_', ' ')
+        text.append(name)
+
+    plt.figure(figsize=(6, 4))
+    plt.scatter(x, y, s=10)
+    
+    plt.xlabel(x_chosen+x_units)
+    plt.ylabel('Mean '+y_chosen+y_units)
+    plt.title(x_chosen+' v. '+y_chosen+' Correlation Plot')
+    
+    for point in range(len(x)):
+        plt.annotate(text[point], (x[point], y[point]))
+
+    plt.tight_layout()
+    plt.show()
+
+
+#Next step is to allow slicing by date to compare one era/epoch/decade with another...
 
 
 
-
-
-'''def correlation_plotter():
-#plot all station's altitude, latitude vs. temp max, temp min, snowfall, snowdepth'''
 
 def main():
 
     #intro()
     #single_df_plotter()
     #get_df_descriptions()
-    comparison_plotter()
-
+    #comparison_plotter()
+    correlation_plotter()
 if __name__ == "__main__":
     main()
