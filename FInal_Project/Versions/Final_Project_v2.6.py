@@ -31,6 +31,33 @@ def build_dfs():
 
     return df_dict
 
+def integer_checker(slicer_datum):
+  while True:
+    try:
+       user_input = int(input(slicer_datum))       
+    except ValueError:
+       print("Not a valid month/day/year! Try again.")
+       continue
+    else:
+       return user_input 
+       break 
+
+def get_slicer_dates():
+    
+    start_month = integer_checker('start month: ')
+    start_month = str(start_month)
+    start_day = integer_checker('start day: ')
+    start_day = str(start_day)
+    start_year = integer_checker('start year: ')
+    start_year = str(start_year)
+    
+    start_date = start_month+'/'+start_day+'/'+start_year
+    print(start_date)
+
+    
+    
+    
+
 def slice_dfs():
     
     df_dict = build_dfs()
@@ -60,11 +87,7 @@ def single_df_plotter():
 
     print()
     print('Station: '+df_name_chosen)
-    print()
 
-    in_tag = ' in '  
-    at_tag = ' at '
-    
     plot_var_dict = {'1':'Snowfall', '2':'Snowdepth','3':'TempMin','4':'TempMax'} 
     print_var_dict = {'1':'Daily Snowfall', '2':'Daily Snow Depth','3':'Minimum Daily Temperature','4':'Maximum Daily Temperature'}
     
@@ -72,41 +95,23 @@ def single_df_plotter():
     print_var_choice = plot_var_choice
     print_variable = print_var_dict[print_var_choice]
     
+    if int(plot_var_choice) < 3:
+        print_unit = ' (in)'
+    else:
+        print_unit = ' (°F)'
     
     plot_variable = plot_var_dict[plot_var_choice]
-       
-    plt.plot(df_choice[plot_variable])
+
+    var_stat_plot = df_choice[plot_variable].plot(title=df_fixed_name+' '+print_variable+' '+start+'-'+end, xlabel='Year', ylabel=print_variable+print_unit, style='.', ms=3, figsize = (8, 4))
     
-    at_stations = ['Laurel_Mountain']
-    
-    range_count = int(len(df_choice[plot_variable]))
-    
-    if df_name_chosen in at_stations:
-        preposition = at_tag
-    else:
-        preposition = in_tag
-        
-    plot_title = 'Historical '+print_variable+preposition+df_fixed_name
-    
-    plt.title(plot_title, fontweight = 'bold', color = 'black', fontsize = '12')
-    plt.xticks(np.arange(min(df_choice['Snowdepth']), max(df_choice['Snowdepth'])+range_count, 80.0)) #last number is the size of the step between ticks
-    plt.xticks(rotation=70)
-    plt.xticks(fontsize = 7)
-    plt.yticks(fontsize = 7)
-    plt.xlabel('\nDate', fontweight='bold', color = 'black', fontsize='8')
-    plt.ylabel('Snow Depth in Inches\n', fontweight='bold', color = 'black', fontsize='8')
-    plt.margins(0.01)
-    plt.tight_layout()
-    plt.savefig('fa21python2_adam/Final_Project/Plots/'+plot_title+'.jpg')
-    plt.show()
-    #Saved plot is totally blank - need to fix...
-    plt.close()
-    print('\nPlot successfully exported.')
-    
-#Make it so you can plot any one variable for all eight stations; but also
-#generate wee df's from the describe func for each and then do a bar graph of 
-#the mean of each datum.        
-   
+    start = start.replace('/', '.')
+    end = end.replace('/', '.')
+
+    fig = var_stat_plot.get_figure()
+    fig.savefig('fa21python2_adam/Final_Project/Plots/Single_Stations/'+df_fixed_name+'_'+print_variable+'_'+start+'-'+end+'.jpg')
+    plt.close(fig)
+    print('\nPlot successfully exported to \'Plots/Single_Stations\'')   
+
 def descriptive_stats_grapher():
     
     df_dict, start, end = slice_dfs()
@@ -127,7 +132,7 @@ def descriptive_stats_grapher():
         snowfall_dict[key] = df_dict[key].loc['Snowfall']
         snowdepth_dict[key] = df_dict[key].loc['Snowdepth']
         tempmin_dict[key] = df_dict[key].loc['TempMin']      
-        tempmax_dict[key] = df_dict[key].loc['TempMax']        
+        tempmax_dict[key] = df_dict[key].loc['TempMax']  
     
     av_var_choice = input('Pick a variable and to see the graph of its average for each station.  Note that some stations reporting period is longer or shorter than others, so this comparison may be unequal.\n\n1. Average Daily Snowfall\n2. Average Daily Snow Depth\n3. Average Daily Minimum Temperature\n4. Average Daily Maximum Temperature\n\nChoice: ')
     
@@ -142,10 +147,18 @@ def descriptive_stats_grapher():
             for value in snowfall_dict.values():
                 value = round(value, 1)
                 snowfall_values.append(value)
+                
+            mean_snowfall = (sum(snowfall_values))/(len(snowfall_values))
+            mean_snowfall = round(mean_snowfall, 1)
+            snowfall_values.append(mean_snowfall)
+                               
             for key in snowfall_dict.keys():
                 key = key.replace('_', ' ')
                 snowfall_keys.append(key)                 
-            plt.bar(snowfall_keys, snowfall_dict.values(), color = 'skyblue')
+                
+            snowfall_keys.append('All Stations Average')   
+                             
+            plt.bar(snowfall_keys, snowfall_values, color = 'skyblue')
             plt.xticks(rotation =60, fontsize = 10, ha = 'right')
             plt.title('Average Snowfall, All Stations '+start+'-'+end)
             plt.margins(0.1)
@@ -158,9 +171,9 @@ def descriptive_stats_grapher():
             start = start.replace('/', '.')
             end = end.replace('/', '.')            
             
-            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_Means_Comparison/Snowfall_All_Stations-'+start+'-'+end+'.jpg')
-            print('\nFigure saved to \'Plots\' folder')            
-            plt.show()
+            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/Means_Comparisons/Snowfall_All_Stations-'+start+'-'+end+'.jpg')
+            print('\nFigure saved to directory \'Plots/All_Stations/Means_Comparisons\'')
+            plt.close()
         
         if av_var_choice == '2':
           
@@ -169,10 +182,18 @@ def descriptive_stats_grapher():
             for value in snowdepth_dict.values():
                 value = round(value, 1)
                 snowdepth_values.append(value)
+                
+            mean_snowdepth = (sum(snowdepth_values))/(len(snowdepth_values))
+            mean_snowdepth = round(mean_snowdepth, 1)
+            snowdepth_values.append(mean_snowdepth)    
+                
             for key in snowdepth_dict.keys():
                 key = key.replace('_', ' ')
-                snowdepth_keys.append(key)                
-            plt.bar(snowdepth_keys, snowdepth_dict.values(), color = 'thistle')
+                snowdepth_keys.append(key)       
+                
+            snowdepth_keys.append('All Stations Average')
+        
+            plt.bar(snowdepth_keys, snowdepth_values, color = 'thistle')
             plt.xticks(rotation =60, fontsize = 10, ha = 'right')
             plt.title('Average Snow Depth, All Stations '+start+'-'+end)
             plt.margins(0.1)
@@ -185,21 +206,30 @@ def descriptive_stats_grapher():
             start = start.replace('/', '.')
             end = end.replace('/', '.')            
             
-            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_Means_Comparison/Snow_Depth_All_Stations-'+start+'-'+end+'.jpg')
-            print('Figure saved to \'Plots\' folder')
-            plt.show()
+            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/Means_Comparisons/Snow_Depth_All_Stations-'+start+'-'+end+'.jpg')
+            print('\nFigure saved to directory \'Plots/All_Stations/Means_Comparisons\'')
+            plt.close()
             
         if av_var_choice == '3':
           
             tempmin_values = []
             tempmin_keys = []
+            
             for value in tempmin_dict.values():
                 value = round(value, 1)
                 tempmin_values.append(value)
+                
+            mean_tempmin = (sum(tempmin_values))/(len(tempmin_values))
+            mean_tempmin = round(mean_tempmin, 1)
+            tempmin_values.append(mean_tempmin)     
+                
             for key in tempmin_dict.keys():
                 key = key.replace('_', ' ')
-                tempmin_keys.append(key)                
-            plt.bar(tempmin_keys, tempmin_dict.values(), color = 'cadetblue')
+                tempmin_keys.append(key)         
+                
+            tempmin_keys.append('All Stations Average')    
+                
+            plt.bar(tempmin_keys, tempmin_values, color = 'cadetblue')
             plt.xticks(rotation =60, fontsize = 10, ha = 'right')
             plt.title('Average Minimum Temperature, All Stations '+start+'-'+end)
             plt.margins(0.1)
@@ -212,20 +242,29 @@ def descriptive_stats_grapher():
             start = start.replace('/', '.')
             end = end.replace('/', '.')            
             
-            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_Means_Comparison/Temp_Min_All_Stations-'+start+'-'+end+'.jpg')
-            print('Figure saved to \'Plots\' folder')
-            plt.show()
+            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/Means_Comparisons/Temp_Min_All_Stations-'+start+'-'+end+'.jpg')
+            print('\nFigure saved to directory \'Plots/All_Stations/Means_Comparisons\'')
+            plt.close()
 
         if av_var_choice == '4':
           
             tempmax_values = []
             tempmax_keys = []
+            
             for value in tempmax_dict.values():
                 value = round(value, 1)
                 tempmax_values.append(value)
+                
+            mean_tempmax = (sum(tempmax_values))/(len(tempmax_values))
+            mean_tempmax = round(mean_tempmax, 1)
+            tempmax_values.append(mean_tempmax)     
+                
             for key in tempmax_dict.keys():
                 key = key.replace('_', ' ')
-                tempmax_keys.append(key)                
+                tempmax_keys.append(key)        
+                
+            tempmax_keys.append('All Stations Average')    
+                
             plt.bar(tempmax_keys, tempmax_values, color = 'firebrick')
             plt.xticks(rotation =60, fontsize = 10, ha = 'right')
             plt.title('Average Maximum Temperature, All Stations '+start+'-'+end)
@@ -239,9 +278,10 @@ def descriptive_stats_grapher():
             start = start.replace('/', '.')
             end = end.replace('/', '.')     
             
-            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_Means_Comparison/Temp_Max_All_Stations-'+start+'-'+end+'.jpg')
-            print('Figure saved to \'Plots\' folder')
-            plt.show()      
+            plt.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/Means_Comparisons/Temp_Max_All_Stations-'+start+'-'+end+'.jpg')
+            print('\nFigure saved to directory \'Plots/All_Stations/Means_Comparisons\'')
+            plt.close()
+   
                 
 def comparison_plotter():
 #plots a single variable for all stations across the whole time period; so, 8 line plots, coded
@@ -450,9 +490,12 @@ def menu():
             menu()
         if menu_choice == '5':
             func_quit()
+            
+    elif menu_choice == 'Q' or menu_choice == 'q':
+        func_quit()
         
     else:
-        print('No good, bub.  Try again.')
+        print('\nNo good, bub.  Try again.')
         menu()
 
 def func_quit():
@@ -461,12 +504,13 @@ def func_quit():
 def main():
 
     #intro()
-    menu()
+    #menu()
     #single_df_plotter()
     #descriptive_stats_grapher()
     #comparison_plotter()
     #correlation_plotter()
     #slice_dfs()
+    get_slicer_dates()
 
 if __name__ == "__main__":
     main()

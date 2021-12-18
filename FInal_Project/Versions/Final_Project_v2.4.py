@@ -72,7 +72,6 @@ def single_df_plotter():
     print_var_choice = plot_var_choice
     print_variable = print_var_dict[print_var_choice]
     
-    
     plot_variable = plot_var_dict[plot_var_choice]
        
     plt.plot(df_choice[plot_variable])
@@ -86,16 +85,22 @@ def single_df_plotter():
     else:
         preposition = in_tag
         
+    df_choice[plot_variable].plot(title='Historical ', xlabel='Harble', ylabel='Phooey', style='.', ms=4, figsize = (12, 6))
+        
     plot_title = 'Historical '+print_variable+preposition+df_fixed_name
     
     plt.title(plot_title, fontweight = 'bold', color = 'black', fontsize = '12')
+    
     plt.xticks(np.arange(min(df_choice['Snowdepth']), max(df_choice['Snowdepth'])+range_count, 80.0)) #last number is the size of the step between ticks
+    
     plt.xticks(rotation=70)
+    
     plt.xticks(fontsize = 7)
     plt.yticks(fontsize = 7)
+    
     plt.xlabel('\nDate', fontweight='bold', color = 'black', fontsize='8')
     plt.ylabel('Snow Depth in Inches\n', fontweight='bold', color = 'black', fontsize='8')
-    plt.margins(0.01)
+    
     plt.tight_layout()
     plt.savefig('fa21python2_adam/Final_Project/Plots/'+plot_title+'.jpg')
     plt.show()
@@ -461,8 +466,8 @@ def func_quit():
 def main():
 
     #intro()
-    menu()
-    #single_df_plotter()
+    #menu()
+    single_df_plotter()
     #descriptive_stats_grapher()
     #comparison_plotter()
     #correlation_plotter()
