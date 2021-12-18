@@ -24,7 +24,7 @@ rcParams.update({'figure.autolayout': True})
 
 #The very simplest function, which probably doesn't need to exist, as just sys.exit() would get the job done.
 def func_quit():
-    print('Thanks for using the Western PA Winter Weather Plotter - Have a nice day!')
+    print('\nThanks for using the Western PA Winter Weather Plotter - Have a nice day!')
     sys.exit()
 #This function does what you'd think:  it builds the dataframes that will be used to conduct most of the subsequent calculation and visualization.
 def build_dfs():
@@ -555,13 +555,19 @@ def comparison_plotter():
     
     #And create this variable, a tally of the total number of observations graphed, to be displayed on the x-axis.  Since days with snowdepth = 0 were excluded from the dataset from the start, this number is in itself fairly informative.
     ob_count = str(len(all_stations_df.index))
+
+    #So we finally get to plot our dataframe; the figure size is quite large, since we're dealing with a scatter plot with thousands of observations over nearly fifty years.
+    all_stations_plot = all_stations_df.plot(style='.', ms=12, figsize = (25, 10), fontsize=18)
+    
+    #Set title, fontsize;
+    plt.title('Historical '+fixed_var_sels[var_sel]+'\n', fontsize=24)
+    #Set xlabel and ylabel, fontsizes.
+    plt.xlabel('\nObservations = '+ob_count, fontsize=18)
+    plt.ylabel(fixed_var_sels[var_sel]+unit+'\n', fontsize=18)
     
     #And fix these once again for filepath-ing
     start = start.replace('/', '.')
     end = end.replace('/', '.')
-
-    #So we finally get to plot our dataframe; the figure size is quite large, since we're dealing with a scatter plot with thousands of observations over nearly fifty years.
-    all_stations_plot = all_stations_df.plot(title='Historical '+fixed_var_sels[var_sel], xlabel='Observations = '+ob_count, ylabel=fixed_var_sels[var_sel]+unit, style='.', ms=12, figsize = (25, 10))
     
     #We don't want to display this huge plot, so we handle things this way instead, as above, and save the plot to the appropriate directory.
     fig = all_stations_plot.get_figure()
