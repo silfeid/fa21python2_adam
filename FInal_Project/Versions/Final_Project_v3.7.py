@@ -4,7 +4,6 @@ Created on Fri December 10 20:55:41 2021
 
 @author: Adam Brode (brodeam@gmail.com) 
 
-Boilerplate explanation goes here.
 """
 #os.path will be used to pull files from a specified directory according to certain criteria, and to create directories for storing saved plots based on the names of the dataframes plotted.
 import os.path
@@ -18,6 +17,7 @@ import sys
 from matplotlib import rcParams
 #datetime alows strings ina  given format to be interpreted as datetime (or here, just date) objects; although pandas has a similar function built-in, here I wanted to compare the starting and ending dates by which the user can slice the dataframes, in order to make sure that the specified end date does not precede the specified start date.  In hindsight, I could probably also have used it to control the input for those dates, instead of the exception handling function for integers that I built on, but oh well.  If it ain't broke...
 from datetime import datetime as dt
+import numpy as np
 
 #The auto-layout feature should prevent some text etc. from being cut-off; I figured better safe than sorry, and it seems to at least not have caused any problems.
 rcParams.update({'figure.autolayout': True})
@@ -273,7 +273,7 @@ def single_df_plotter():
     
     #We'll turn that int to a string and use it grab the correct print variable from the print variable dictionary we created a few lines above.  Just so it'll look all nice later on.
     plot_var_choice = str(plot_var_choice)
-    print_variable = print_var_dict[print_var_choice]
+    print_variable = print_var_dict[plot_var_choice]
     
     #Picking what units to display on the y axis of the plot (below); since choices one and two for plot_var are measured in inches, and 3 and 4 are measured in degrees Fahrenheit, the if clause here is pretty simple.
     if int(plot_var_choice) < 3:
@@ -291,7 +291,7 @@ def single_df_plotter():
     start = start.replace('/', '.')
     end = end.replace('/', '.')
 
-    #Retrieve the figure we created above in order to save it; I frankly can't remember why it has to be done this way, but I believe that it does, at least if you don't want the figure to be displayed first, which I don't - I find that the display area in the console is too small for convenient viewing, and that the display of the plots clutters the display and distracts the user from the efficient retrieval of the plots.  My program saves all the plots to directories created for the purpose, to be viewed and compared later.  They're intuitively named, and the program informs the user of the save locations upon successful export as well.
+    #Retrieve the figure we created above in order to save it; I frankly don't know why it has to be done this way, but I believe that it does, at least if you don't want the figure to be displayed first, which I don't - I find that the display area in the console is too small for convenient viewing, and that the display of the plots clutters the display and distracts the user from the efficient retrieval of the plots.  My program saves all the plots to directories created for the purpose, to be viewed and compared later.  They're intuitively named, and the program informs the user of the save locations upon successful export as well.
     fig = var_stat_plot.get_figure()
     #The filepath for saving uses the df_name_chosen variable to get into the final directory, then creates a unique name for the plot using the station name, variable plotted, and date range used.  If someone entered the same variables (station, plot variable, and dates), the plot would be overwritten, but only with the exact same plot, so, no harm done.
     fig.savefig('fa21python2_adam/Final_Project/Plots/Single_Stations/'+df_name_chosen+'/'+df_name_chosen+'_'+print_variable+'_'+start+'-'+end+'.jpg')
@@ -505,7 +505,8 @@ def descriptive_stats_grapher():
             plt.close()
         
     else:
-        print('\nInput not recognized.  Returning to menu.')
+        print('\nInput not recognized.  Returning to Main Menu.')
+        menu()
    
 #This is the main attraction; we pick a variable and plot it across the specified date range for all stations.  Lots of data getting processed for this one.                
 def comparison_plotter():
@@ -524,9 +525,7 @@ def comparison_plotter():
     else:
         print('Choice not valid.  Returning to Main Menu.')
         menu()
-    
 
-    
     #This for loop redefines the values in the df_dict(ionary) as the series corresponding to whichever weather variable corresponds to the chosen var_sel value.  So, each key is station name, and each value is now a series corresponding to var_sel.
     for key in df_keys:
         df_dict[key] = pd.Series(df_dict[key][var_sel], name = key)
@@ -576,6 +575,34 @@ def comparison_plotter():
     fig.savefig('fa21python2_adam/Final_Project/Plots/All_Stations/All_Stations_'+var_sel+'_'+start+'-'+end+'.png')
     plt.close()
     print('\nPlot saved in directory \'Plots/All_Stations\' with appropriate variable names.')
+    #And just because they might be handy, we save the descriptive statistics to csv as well.
+    #First, we'll create a new colum to add to the df, one comprised of the averages for each station for each row in the df.
+    all_stations_summary_df = all_stations_df.describe()
+    
+    counts = list(all_stations_summary_df.loc['count'])
+    means = list(all_stations_summary_df.loc['mean'])
+    stds = list(all_stations_summary_df.loc['std'])
+    mins = list(all_stations_summary_df.loc['min'])
+    twentyfives = list(all_stations_summary_df.loc['25%'])
+    fifties = list(all_stations_summary_df.loc['50%'])
+    seventyfives = list(all_stations_summary_df.loc['75%'])
+    maxes = list(all_stations_summary_df.loc['max'])
+
+    count = round((sum(counts))/(len(counts)), 1)
+    mean = (sum(means))/(len(means))
+    std = (sum(stds))/(len(stds))
+    mins = (sum(mins))/(len(mins))
+    twentyfive = round((sum(twentyfives))/(len(twentyfives)), 1)
+    fifty = round((sum(fifties))/(len(fifties)), 1)
+    seventyfive = round((sum(seventyfives))/(len(seventyfives)), 1)
+    maxes = round((sum(maxes))/(len(maxes)), 1)
+    
+    all_stations_list = [count, mean, std, mins, twentyfive, fifty, seventyfive, maxes]
+    
+    all_stations_summary_df['All Stations Average'] = all_stations_list                     
+
+    all_stations_summary_df.to_csv('fa21python2_adam/Final_Project/Summary_Stats/All_Stations_'+var_sel+'_'+start+'-'+end+'.csv')
+    print('Descriptive statistics saved in directory \'Summary_Stats\'.')
 
 #For this function, we take the same mean values used in the descriptive_stats_grapher and plot each/any one against the geographical characteristics of each station:  latitude, longitude, elevation, and a weighted average of latitude and elevation (more on that below). 
 def correlation_plotter():
